@@ -1,0 +1,10 @@
+# depslib dependency file v1.0
+1714762438 source:c:\users\matheus\desktop\algoritmos ii\bomberman_struct\main.cpp
+	<iostream>
+	<windows.h>
+	<conio.h>
+	<time.h>
+	<vector>
+	<chrono>
+	<locale.h>
+
