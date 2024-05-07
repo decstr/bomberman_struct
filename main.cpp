@@ -29,6 +29,11 @@ struct Jogador
     short int x;
     short int y;
     short int vidas = 1;
+    bool resisteBomba = false;
+    bool raioBomba = 1;
+    bool bombaRelogio = false;
+    bool noclip = false;
+    bool noclipBomba = false;
 };
 
 // Estrutura para representar as bombas
@@ -38,7 +43,12 @@ struct Bomba
     short int x;
     short int y;
 };
+<<<<<<< HEAD
+
 // Função para verificar se o movimento é válido
+=======
+// FunÃ§Ã£o para verificar se o movimento Ã© vÃ¡lido
+>>>>>>> d38599a0efd08e2aa271bd311eccd037cf3252ee
 bool verificaMovimento(int m[][15], int x, int y)
 {
     if (m[x][y] == 8){
@@ -50,41 +60,42 @@ bool verificaMovimento(int m[][15], int x, int y)
 bool chancePowerUp ()
 {
     int chance = rand() % 100;
-    if (chance <= 10)
+    if (chance < 100)
     {
-        return chancePowerUp;
+        return true;
     }
     else {
 
-        return -1;
-    }
-
-}
-
-int powerUp()
-{
-    chancePowerUp();
-    if (chancePowerUp)
-    { int tipoPowerUp = rand () % 4; //0 para aumento da quantidade de bombas, 1 vida extra, 2 para invencibilidade contra bomba e 3 para atravessar blocos quebraveis
-        if (tipoPowerUp == 2)
-        {
-            return tipoPowerUp;
-        }
-    }
-}
-bool resisteBomba()
-{
-    int tipo = powerUp();
-    if (tipo == 2){
-        return resisteBomba;
-
-    }
-    else {
         return false;
     }
+
 }
 
+<<<<<<< HEAD
+//int powerUp()
+//{
+//    chancePowerUp();
+//    if (chancePowerUp)
+//     int tipoPowerUp = 2; //0 para aumento da quantidade de bombas, 1 vida extra, 2 para invencibilidade contra bomba e 3 para atravessar blocos quebraveis
+//        return tipoPowerUp;
+//
+//}
+//bool resisteBomba()
+//{
+//    int tipo = powerUp();
+//    if (tipo == 2){
+//        return resisteBomba;
+//
+//    }
+//    else {
+//        return false;
+//    }
+//}
+
 // Função para mover os inimigos
+=======
+// FunÃ§Ã£o para mover os inimigos
+>>>>>>> d38599a0efd08e2aa271bd311eccd037cf3252ee
 void moverInimigos(int m[][15], vector<Inimigo>& inimigos)
 {
     for (auto& inimigo : inimigos)
@@ -121,7 +132,7 @@ void moverInimigos(int m[][15], vector<Inimigo>& inimigos)
 
 }
 
-// Função para definir o estado do jogo
+// FunÃ§Ã£o para definir o estado do jogo
 void definirJogo(int m[][15], const vector<Inimigo>& inimigos, const Jogador& jogador, const Bomba& bomba, int& contadorPiscadasBomba, const Display& ingameDisplay)
 {
     COORD coord;
@@ -154,6 +165,7 @@ void definirJogo(int m[][15], const vector<Inimigo>& inimigos, const Jogador& jo
                     }
                 }
                 if (!verificaInimigo)
+
                 {
                     switch (m[i][j])
                     {
@@ -165,7 +177,7 @@ void definirJogo(int m[][15], const vector<Inimigo>& inimigos, const Jogador& jo
                         break;
                     case 2:
                         cout << char(35);
-                        break; // Paredes quebráveis
+                        break; // Paredes quebrÃ¡veis
                     case 3:
                         cout << char(157);
                         break; // bomba
@@ -177,9 +189,16 @@ void definirJogo(int m[][15], const vector<Inimigo>& inimigos, const Jogador& jo
                         break; // Jogador
                     case 7:
                         cout << char(134);
+<<<<<<< HEAD
                         break; // explosão
                     case 8:
+                        cout << char(5);
+                        break; //powerup
+=======
+                        break; // explosÃ£o
+                    case 8:
                         cout << char(75);
+>>>>>>> d38599a0efd08e2aa271bd311eccd037cf3252ee
                     }
                 }
             }
@@ -193,7 +212,7 @@ void definirJogo(int m[][15], const vector<Inimigo>& inimigos, const Jogador& jo
 
 void resetMapa(int m[][15], vector<Inimigo>& inimigos,  Jogador& jogador, Bomba& bomba, int& contadorPiscadasBomba, Display& ingameDisplay)
 {
-    // Reinicializa o mapa com suas configurações iniciais
+    // Reinicializa o mapa com suas configuraÃ§Ãµes iniciais
     Sleep(1000);
     system("cls");
     for (int i = 0; i < 15; i++)
@@ -232,7 +251,7 @@ void resetMapa(int m[][15], vector<Inimigo>& inimigos,  Jogador& jogador, Bomba&
                         break;
                     case 2:
                         cout << char(35);
-                        break; // Paredes quebráveis
+                        break; // Paredes quebrÃ¡veis
                     case 3:
                         cout << char(157);
                         break; // bomba
@@ -244,7 +263,7 @@ void resetMapa(int m[][15], vector<Inimigo>& inimigos,  Jogador& jogador, Bomba&
                         break; // Jogador
                     case 7:
                         cout << char(134);
-                        break; // explosão
+                        break; // explosÃ£o
                     case 8:
                         cout << char(75);
                     }
@@ -264,11 +283,11 @@ void resetMapa(int m[][15], vector<Inimigo>& inimigos,  Jogador& jogador, Bomba&
             novoInimigo.x = rand() % 15;
             novoInimigo.y = rand() % 15;
         }
-        while (m[novoInimigo.x][novoInimigo.y] != 0);   // Garante que o inimigo não nasça em uma parede
+        while (m[novoInimigo.x][novoInimigo.y] != 0);   // Garante que o inimigo nÃ£o nasÃ§a em uma parede
         inimigos.push_back(novoInimigo); // Adiciona o novo inimigo ao vetor
     }
 
-    // Limpa a área de explosão
+    // Limpa a Ã¡rea de explosÃ£o
     for (int i = 0; i < 15; i++)
     {
         for (int j = 0; j < 15; j++)
@@ -296,10 +315,10 @@ void resetMapa(int m[][15], vector<Inimigo>& inimigos,  Jogador& jogador, Bomba&
     int minParedesQuebraveis = 10;
     int maxParedesQuebraveis = 20;
 
-    // Gera uma quantidade aleatória de paredes quebraveis limitadas no minimo e maximo
+    // Gera uma quantidade aleatÃ³ria de paredes quebraveis limitadas no minimo e maximo
     int numParedesQuebraveis = rand() % (maxParedesQuebraveis - minParedesQuebraveis + 1) + minParedesQuebraveis;
 
-    // Coloca as paredes quebraveis de modo aleatório
+    // Coloca as paredes quebraveis de modo aleatÃ³rio
     for (int k = 0; k < numParedesQuebraveis; k++)
     {
         int x, y;
@@ -308,11 +327,11 @@ void resetMapa(int m[][15], vector<Inimigo>& inimigos,  Jogador& jogador, Bomba&
             x = rand() % 15;
             y = rand() % 15;
         }
-        while (m[x][y] != 0);   // Garante que a posição esteja vazia (não é parede existente, inimigo ou o jogador)
+        while (m[x][y] != 0);   // Garante que a posiÃ§Ã£o esteja vazia (nÃ£o Ã© parede existente, inimigo ou o jogador)
         m[x][y] = 2;
     }
 
-    // Reinicializa as variáveis relacionadas ao jogo
+    // Reinicializa as variÃ¡veis relacionadas ao jogo
     jogador.x = 1;
     jogador.y = 1;
     bomba.ativa = false;
@@ -324,9 +343,55 @@ void resetMapa(int m[][15], vector<Inimigo>& inimigos,  Jogador& jogador, Bomba&
     ingameDisplay.tempo = 0;
 }
 
+// Função para destruir uma parede quebrável e possivelmente gerar um power-up
+void destruirParedeQuebravel(int m[][15], int x, int y, Jogador& jogador, Display& ingameDisplay)
+{
+    int tipoPowerUp = rand()%7
+     for (int i = 0; i < 15; i++)
+    {
+        for (int j = 0; j < 15; j++)
+        {
+    if (m[x][y] == 2) // Verifica se é uma parede quebrável
+    {
+        m[x][y] = 0; // Destrói a parede quebrável
+
+        // Gera um power-up com uma certa probabilidade
+        if (chancePowerUp())
+        {
 
 
-// Função para verificar se o jogo acabou
+            // Define o símbolo correspondente ao tipo de power-up gerado
+            switch (tipoPowerUp)
+            {
+                case 0:
+                    m[x][y] = 9; // Símbolo para aumento da quantidade de bombas
+                    //jogador.maximoBombas++;
+                    break;
+                case 1:
+                    m[x][y] = 8; // Símbolo para vida extra
+                    jogador.vidas++;
+                    break;
+                case 2:
+                    m[x][y] = 10; // Símbolo para vida extra
+                    jogador.resisteBomba == true;
+                    break;
+                // Adicione outros casos conforme necessário
+                default:
+                    m[x][y] = 10; // Símbolo padrão para power-ups desconhecidos
+                    break;
+            }
+
+
+
+
+        }
+    }
+}
+}
+}
+
+
+// FunÃ§Ã£o para verificar se o jogo acabou
 bool verificaGameOver(int jogadorX, int jogadorY, const vector<Inimigo>& inimigos)
 {
     for (const auto& inimigo : inimigos)
@@ -336,7 +401,7 @@ bool verificaGameOver(int jogadorX, int jogadorY, const vector<Inimigo>& inimigo
             return true; // Jogador atingido pelo inimigo
         }
     }
-    return false; // Jogador não atingido
+    return false; // Jogador nÃ£o atingido
 }
 
 int main()
@@ -379,7 +444,7 @@ int main()
             inimigo.x = rand() % 15;
             inimigo.y = rand() % 15;
         }
-        while (m[inimigo.x][inimigo.y] != 0);   // Garante que o inimigo não nasça em uma parede
+        while (m[inimigo.x][inimigo.y] != 0);   // Garante que o inimigo nÃ£o nasÃ§a em uma parede
     }
     Jogador jogador = {1, 1};
     Bomba bomba = {0, 0, false};
@@ -392,22 +457,22 @@ int main()
     auto inicioContadorInGame = steady_clock::now();
     milliseconds updateTempoPlayer(50); // Controle da velocidade de movimento do jogador
     milliseconds updateTempoInimigo(250); // Controla a velocidade de movimento do inimigo
-    milliseconds tempoExplosao(3000); // Tempo de explosão da bomba (3 segundos)
+    milliseconds tempoExplosao(3000); // Tempo de explosÃ£o da bomba (3 segundos)
     milliseconds tempoPiscadaBomba(500); // Intervalo de tempo para a piscada da bomba
-    milliseconds timerDisplayExplosao(50); // Timer referente ao tempo no qual os caracteres da explosão permanecem no mapa
+    milliseconds timerDisplayExplosao(50); // Timer referente ao tempo no qual os caracteres da explosÃ£o permanecem no mapa
     milliseconds marcadorTempoInGame(1000); // Referente ao tempo mostrado in game
     int contadorPiscadasBomba = 0;
 
 
-    int opcao; // Variável para armazenar a opção do menu
+    int opcao; // VariÃ¡vel para armazenar a opÃ§Ã£o do menu
 
     do
     {
         cout << "=== MENU ===\n";
         cout << "1. Jogar\n";
         cout << "2. Sair\n";
-        cout << "3. Informações de desenvolvimento\n";
-        cout << "Escolha uma opção: ";
+        cout << "3. InformaÃ§Ãµes de desenvolvimento\n";
+        cout << "Escolha uma opÃ§Ã£o: ";
         cin >> opcao;
         system("cls");
 
@@ -419,10 +484,10 @@ int main()
                 auto tempoAtual = steady_clock::now();
                 auto tempoAtual2 = steady_clock::now();
                 auto tempoAtualContadorInGame = steady_clock::now();
-                powerUp();
+                //powerUp();
 
 
-                // Movimentação do jogador
+                // MovimentaÃ§Ã£o do jogador
                 auto contadorTempoPlayer = duration_cast<milliseconds>(tempoAtual - ultimoTempoPlayer);
                 if (contadorTempoPlayer >= updateTempoPlayer)
                 {
@@ -473,20 +538,20 @@ int main()
                                 bomba.y = jogador.y;
                                 ultimoTempoBomba2 = tempoAtual2;
                                 ingameDisplay.qtdBombas++;
-                                m[bomba.x][bomba.y] = 3; // Marca a posição da bomba no mapa
+                                m[bomba.x][bomba.y] = 3; // Marca a posiÃ§Ã£o da bomba no mapa
                             }
                             break;
                         }
                         if (verificaGameOver(jogador.x, jogador.y, inimigos))
                         {
-                            cout << "Você perdeu! O inimigo te atingiu.\n";
+                            cout << "VocÃª perdeu! O inimigo te atingiu.\n";
                             resetMapa(m, inimigos, jogador, bomba, contadorPiscadasBomba,ingameDisplay); // Reseta o mapa
                             break;
                         }
                     }
                 }
 
-                // Movimentação dos inimigos
+                // MovimentaÃ§Ã£o dos inimigos
                 auto contadorTempoInimigo = duration_cast<milliseconds>(tempoAtual - ultimoTempoInimigo);
                 if (contadorTempoInimigo >= updateTempoInimigo)
                 {
@@ -494,7 +559,7 @@ int main()
                     moverInimigos(m, inimigos);
                     if (verificaGameOver(jogador.x, jogador.y, inimigos))
                     {
-                        cout << "Você perdeu! O inimigo te atingiu.\n";
+                        cout << "VocÃª perdeu! O inimigo te atingiu.\n";
                         resetMapa(m, inimigos, jogador, bomba, contadorPiscadasBomba,ingameDisplay); // Reseta o mapa
                         break;
                     }
@@ -507,34 +572,58 @@ int main()
                     inicioContadorInGame = tempoAtualContadorInGame;
                 }
 
-                // Explosão da bomba
+                // ExplosÃ£o da bomba
                 auto contadorTempoBomba = duration_cast<milliseconds>(tempoAtual2 - ultimoTempoBomba2);
                 if (bomba.ativa && contadorTempoBomba >= tempoExplosao)
                 {
-                    // Marca a explosão no mapa
+                    // Marca a explosÃ£o no mapa
                     m[bomba.x][bomba.y] = 0;
                     ultimoTempoBomba2 = tempoAtual;
 
-                    // Verifica se o jogador está na área de explosão
+<<<<<<< HEAD
+                    // Verifica se a parede quebravel está na área de explosão
+=======
+                    // Verifica se o jogador estÃ¡ na Ã¡rea de explosÃ£o
+>>>>>>> d38599a0efd08e2aa271bd311eccd037cf3252ee
                     for (int i = -1; i <= 1; ++i)
                     {
                         for (int j = -1; j <= 1; ++j)
                         {
-                            if (m[bomba.x + i][bomba.y] == 2 || m[bomba.x + i][bomba.y] == 0)   // Se for uma parede quebrável
+                            if (m[bomba.x + i][bomba.y] == 2 || m[bomba.x + i][bomba.y] == 0)   // Se for uma parede quebrÃ¡vel
                             {
+<<<<<<< HEAD
                                 m[bomba.x + i][bomba.y] = 7; // Explosão e Remove a parede quebrável do mapa
+                                destruirParedeQuebravel(m, jogador.x, jogador.y, jogador, ingameDisplay);
                             }
                             else if(m[bomba.x][bomba.y + i] == 2 || m[bomba.x][bomba.y + i] == 0)
                             {
                                 m[bomba.x][bomba.y + i] = 7; // Explosão e Remove a parede quebrável do mapa
+                                destruirParedeQuebravel(m, jogador.x, jogador.y, jogador, ingameDisplay);
                             }
                             else if(m[bomba.x - i][bomba.y] == 2 || m[bomba.x - i][bomba.y] == 0)
                             {
                                 m[bomba.x - i][bomba.y] = 7; // Explosão e Remove a parede quebrável do mapa
+                                destruirParedeQuebravel(m, jogador.x, jogador.y, jogador, ingameDisplay);
                             }
                             else if(m[bomba.x][bomba.y - i] == 2 || m[bomba.x][bomba.y - i] == 0)
                             {
                                 m[bomba.x][bomba.y - i] = 7; // Explosão e Remove a parede quebrável do mapa
+                                destruirParedeQuebravel(m, jogador.x, jogador.y, jogador, ingameDisplay);
+=======
+                                m[bomba.x + i][bomba.y] = 7; // ExplosÃ£o e Remove a parede quebrÃ¡vel do mapa
+                            }
+                            else if(m[bomba.x][bomba.y + i] == 2 || m[bomba.x][bomba.y + i] == 0)
+                            {
+                                m[bomba.x][bomba.y + i] = 7; // ExplosÃ£o e Remove a parede quebrÃ¡vel do mapa
+                            }
+                            else if(m[bomba.x - i][bomba.y] == 2 || m[bomba.x - i][bomba.y] == 0)
+                            {
+                                m[bomba.x - i][bomba.y] = 7; // ExplosÃ£o e Remove a parede quebrÃ¡vel do mapa
+                            }
+                            else if(m[bomba.x][bomba.y - i] == 2 || m[bomba.x][bomba.y - i] == 0)
+                            {
+                                m[bomba.x][bomba.y - i] = 7; // ExplosÃ£o e Remove a parede quebrÃ¡vel do mapa
+>>>>>>> d38599a0efd08e2aa271bd311eccd037cf3252ee
                             }
                             int powerUp;
                                 powerUp = rand() % 2;
@@ -558,7 +647,7 @@ int main()
                         }
                     }
 
-                    // Verifica se o jogador está na área de explosão, do/while verifica se o jogador tem o powerUp de resistencia a bomba
+                    // Verifica se o jogador estÃ¡ na Ã¡rea de explosÃ£o, do/while verifica se o jogador tem o powerUp de resistencia a bomba
                     //resisteBomba();
                     while (!resisteBomba())
                     {
@@ -568,7 +657,7 @@ int main()
                             if ((abs(jogador.x - bomba.x) <= 1 && jogador.y == bomba.y) ||
                                     (abs(jogador.y - bomba.y) <= 1 && jogador.x == bomba.x))
                             {
-                                cout << "Você perdeu! Você foi atingido pela explosão.\n";
+                                cout << "VocÃª perdeu! VocÃª foi atingido pela explosÃ£o.\n";
                                 resetMapa(m, inimigos, jogador, bomba, contadorPiscadasBomba,ingameDisplay); // Reseta o mapa
                                 break;
                             }
@@ -579,10 +668,10 @@ int main()
 
 
 
-                    // Verifica se o inimigo está na área de explosão
+                    // Verifica se o inimigo estÃ¡ na Ã¡rea de explosÃ£o
                     for (auto it = inimigos.begin(); it != inimigos.end();)
                     {
-                        if ((abs(it->x - bomba.x) == 1 && it->y == bomba.y) || //verifica se o inimigo está a 1 posição da bomba
+                        if ((abs(it->x - bomba.x) == 1 && it->y == bomba.y) || //verifica se o inimigo estÃ¡ a 1 posiÃ§Ã£o da bomba
                                 (abs(it->y - bomba.y) == 1 && it->x == bomba.x))
                         {
                             it = inimigos.erase(it); // Remove o inimigo do vetor
@@ -596,7 +685,7 @@ int main()
                     if (inimigos.empty())
                     {
                         // Todos os inimigos foram eliminados, o jogador ganha
-                        cout << "Parabéns! Todos inimigos foram derrotados. Você venceu! \n";
+                        cout << "ParabÃ©ns! Todos inimigos foram derrotados. VocÃª venceu! \n";
                         resetMapa(m, inimigos, jogador, bomba, contadorPiscadasBomba, ingameDisplay); // Reseta o mapa
                         break;
                     }
@@ -605,7 +694,7 @@ int main()
 
                     bomba.ativa = false;
                 }
-                // Timer que remove a explosão do mapa
+                // Timer que remove a explosÃ£o do mapa
                 auto contadorDisplayExplosao = duration_cast<milliseconds>(tempoAtual - ultimoTempoBomba2);
                 if (contadorDisplayExplosao >= timerDisplayExplosao && !bomba.ativa)
                 {
@@ -638,13 +727,13 @@ int main()
         case 2: // Sair
             cout << "Saindo do jogo...\n";
             break;
-        case 3: // Informações de desenvolvimento
-            cout << "Desenvolvido por Matheus de Castro, João Marcos, Nicolas e Miguel Soares" << endl;
-            cout << "Matéria: Algoritmos II" << endl;
+        case 3: // InformaÃ§Ãµes de desenvolvimento
+            cout << "Desenvolvido por Matheus de Castro, JoÃ£o Marcos, Nicolas e Miguel Soares" << endl;
+            cout << "MatÃ©ria: Algoritmos II" << endl;
             cout << "Professor Alex Rese" << endl;
             break;
         default:
-            cout << "Opção inválida. Por favor, escolha uma opção válida.\n";
+            cout << "OpÃ§Ã£o invÃ¡lida. Por favor, escolha uma opÃ§Ã£o vÃ¡lida.\n";
         }
     }
     while (opcao != 2);
