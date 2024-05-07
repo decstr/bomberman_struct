@@ -56,19 +56,19 @@ bool verificaMovimento(int m[][15], int x, int y)
     return m[x][y] == 0;
 }
 
-bool chancePowerUp ()
-{
-    int chance = rand() % 100;
-    if (chance < 100)
-    {
-        return true;
-    }
-    else {
-
-        return false;
-    }
-
-}
+//bool chancePowerUp ()
+//{
+//    int chance = rand() % 100+1;
+//    if (chance < 100)
+//    {
+//        return true;
+//    }
+//    else {
+//
+//        return false;
+//    }
+//
+//}
 
 //int powerUp()
 //{
@@ -374,67 +374,53 @@ void resetMapa(int m[][15], vector<Inimigo>& inimigos,  Jogador& jogador, Bomba&
 }
 
 // Função para destruir uma parede quebrável e possivelmente gerar um power-up
-void destruirParedeQuebravel(int m[][15], int x, int y, Jogador& jogador, Display& ingameDisplay)
+void destruirParedeQuebravel(int m[][15], Jogador& jogador, Display& ingameDisplay)
 {
-    int tipoPowerUp = rand()%7;
-     for (int i = 0; i < 15; i++)
-    {
-        for (int j = 0; j < 15; j++)
-        {
-    if (m[x][y] == 2) // Verifica se é uma parede quebrável
-    {
-        m[x][y] = 0; // Destrói a parede quebrável
+    int tipoPowerUp = rand() % 7;
+    int chancePowerUp = rand()% 100;
+    if (chancePowerUp<100)
+        for (int i = 0; i < 15; i++){
+            for (int j = 0; j<15; j++){
 
-        // Gera um power-up com uma certa probabilidade
-        if (chancePowerUp())
-        {
+                // Gera um power-up com uma certa probabilidade
+                if (m[i][j] == 2) // Verifica se é uma parede quebrável
+                {
+                    m[i][j] = 0; // Destrói a parede quebrável
 
-
-            // Define o símbolo correspondente ao tipo de power-up gerado
-            switch (tipoPowerUp)
-            {
-                case 0:
-                    m[x][y] = 9; // Símbolo para aumento da quantidade de bombas
-                    jogador.maximoBombas++;
-                    break;
-                case 1:
-                    m[x][y] = 8; // Símbolo para vida extra
-                    jogador.vidas++;
-                    break;
-                case 2:
-                    m[x][y] = 10; // Símbolo para vida extra
-                    jogador.resisteBomba == true;
-                    break;
-                case 3:
-                    m[x][y] = 11; // Símbolo para vida extra
-                    jogador.bombaRelogio == true;
-                    break;
-                case 4:
-                    m[x][y] = 12; // Símbolo para vida extra
-                    jogador.noclip == true;
-                    break;
-                case 5:
-                    m[x][y] = 13; // Símbolo para vida extra
-                    jogador.noclipBomba == true;
-                    break;
-                case 6:
-                    m[x][y] = 14; // Símbolo para vida extra
-                    jogador.raioBomba++;
-                    break;
-                // Adicione outros casos conforme necessário
-                default:
-                    m[x][y] = 20; // Símbolo padrão para power-ups desconhecidos
-                    break;
+                    // Define o símbolo correspondente ao tipo de power-up gerado
+                    switch (tipoPowerUp)
+                    {
+                    case 0:
+                        m[i][j] = 9; // Símbolo para aumento da quantidade de bombas
+                        break;
+                    case 1:
+                        m[i][j] = 8; // Símbolo para vida extra
+                        break;
+                    case 2:
+                        m[i][j] = 10; // Símbolo para invencibilidade contra bomba
+                        break;
+                    case 3:
+                        m[i][j] = 11; // Símbolo para bomba relógio
+                        break;
+                    case 4:
+                        m[i][j] = 12; // Símbolo para noclip
+                        break;
+                    case 5:
+                        m[i][j] = 13; // Símbolo para noclip da bomba
+                        break;
+                    case 6:
+                        m[i][j] = 14; // Símbolo para aumento do raio da bomba
+                        break;
+                    // Adicione outros casos conforme necessário
+                    default:
+                        m[i][j] = 20; // Símbolo padrão para power-ups desconhecidos
+                        break;
+                    }
+                }
             }
-
-
-
-
+            }
         }
-    }
-}
-}
-}
+
 
 
 // FunÃ§Ã£o para verificar se o jogo acabou
@@ -453,7 +439,7 @@ bool verificaGameOver(int jogadorX, int jogadorY, const vector<Inimigo>& inimigo
 int main()
 {
     //setlocale(LC_ALL, "Portuguese");
-    srand(time(nullptr));
+    srand(time(NULL));
 
     HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
     CONSOLE_CURSOR_INFO cursorInfo;
@@ -637,35 +623,38 @@ int main()
                             {
 
                                 m[bomba.x + i][bomba.y] = 7; // Explosão e Remove a parede quebrável do mapa
-                                destruirParedeQuebravel(m, jogador.x, jogador.y, jogador, ingameDisplay);
+                                destruirParedeQuebravel(m, jogador, ingameDisplay);
                             }
                             else if(m[bomba.x][bomba.y + i] == 2 || m[bomba.x][bomba.y + i] == 0)
                             {
                                 m[bomba.x][bomba.y + i] = 7; // Explosão e Remove a parede quebrável do mapa
-                                destruirParedeQuebravel(m, jogador.x, jogador.y, jogador, ingameDisplay);
+                                destruirParedeQuebravel(m, jogador, ingameDisplay);
                             }
                             else if(m[bomba.x - i][bomba.y] == 2 || m[bomba.x - i][bomba.y] == 0)
                             {
                                 m[bomba.x - i][bomba.y] = 7; // Explosão e Remove a parede quebrável do mapa
-                                destruirParedeQuebravel(m, jogador.x, jogador.y, jogador, ingameDisplay);
+                                destruirParedeQuebravel(m, jogador, ingameDisplay);
                             }
                             else if(m[bomba.x][bomba.y - i] == 2 || m[bomba.x][bomba.y - i] == 0)
                             {
                                 m[bomba.x][bomba.y - i] = 7; // Explosão e Remove a parede quebrável do mapa
-                                destruirParedeQuebravel(m, jogador.x, jogador.y, jogador, ingameDisplay);
+                                destruirParedeQuebravel(m, jogador, ingameDisplay);
 
                             }
                             else if(m[bomba.x][bomba.y + i] == 2 || m[bomba.x][bomba.y + i] == 0)
                             {
                                 m[bomba.x][bomba.y + i] = 7; // ExplosÃ£o e Remove a parede quebrÃ¡vel do mapa
+                                destruirParedeQuebravel(m, jogador, ingameDisplay);
                             }
                             else if(m[bomba.x - i][bomba.y] == 2 || m[bomba.x - i][bomba.y] == 0)
                             {
                                 m[bomba.x - i][bomba.y] = 7; // ExplosÃ£o e Remove a parede quebrÃ¡vel do mapa
+                                destruirParedeQuebravel(m, jogador, ingameDisplay);
                             }
                             else if(m[bomba.x][bomba.y - i] == 2 || m[bomba.x][bomba.y - i] == 0)
                             {
                                 m[bomba.x][bomba.y - i] = 7; // ExplosÃ£o e Remove a parede quebrÃ¡vel do mapa
+                                destruirParedeQuebravel(m, jogador, ingameDisplay);
 
                             }
 //                            int powerUp;
