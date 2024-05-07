@@ -29,6 +29,7 @@ struct Jogador
     short int x;
     short int y;
     short int vidas = 1;
+    short int maximoBombas = 1;
     bool resisteBomba = false;
     bool raioBomba = 1;
     bool bombaRelogio = false;
@@ -43,12 +44,10 @@ struct Bomba
     short int x;
     short int y;
 };
-<<<<<<< HEAD
+
 
 // Função para verificar se o movimento é válido
-=======
-// FunÃ§Ã£o para verificar se o movimento Ã© vÃ¡lido
->>>>>>> d38599a0efd08e2aa271bd311eccd037cf3252ee
+
 bool verificaMovimento(int m[][15], int x, int y)
 {
     if (m[x][y] == 8){
@@ -71,7 +70,6 @@ bool chancePowerUp ()
 
 }
 
-<<<<<<< HEAD
 //int powerUp()
 //{
 //    chancePowerUp();
@@ -93,9 +91,7 @@ bool chancePowerUp ()
 //}
 
 // Função para mover os inimigos
-=======
-// FunÃ§Ã£o para mover os inimigos
->>>>>>> d38599a0efd08e2aa271bd311eccd037cf3252ee
+
 void moverInimigos(int m[][15], vector<Inimigo>& inimigos)
 {
     for (auto& inimigo : inimigos)
@@ -189,16 +185,30 @@ void definirJogo(int m[][15], const vector<Inimigo>& inimigos, const Jogador& jo
                         break; // Jogador
                     case 7:
                         cout << char(134);
-<<<<<<< HEAD
+
                         break; // explosão
                     case 8:
                         cout << char(5);
                         break; //powerup
-=======
-                        break; // explosÃ£o
-                    case 8:
+                    case 9:
                         cout << char(75);
->>>>>>> d38599a0efd08e2aa271bd311eccd037cf3252ee
+                        break;
+                    case 10:
+                        cout << char(75);
+                        break;
+                    case 11:
+                        cout << char(75);
+                        break;
+                    case 12:
+                        cout << char(75);
+                        break;
+                    case 13:
+                        cout << char(75);
+                        break;
+                     case 14:
+                        cout << char(75);
+                        break;
+
                     }
                 }
             }
@@ -266,6 +276,26 @@ void resetMapa(int m[][15], vector<Inimigo>& inimigos,  Jogador& jogador, Bomba&
                         break; // explosÃ£o
                     case 8:
                         cout << char(75);
+                        break;
+                    case 9:
+                        cout << char(75);
+                        break;
+                    case 10:
+                        cout << char(75);
+                        break;
+                    case 11:
+                        cout << char(75);
+                        break;
+                    case 12:
+                        cout << char(75);
+                        break;
+                    case 13:
+                        cout << char(75);
+                        break;
+                    case 14:
+                        cout << char(75);
+                        break;
+
                     }
                 }
             }
@@ -346,7 +376,7 @@ void resetMapa(int m[][15], vector<Inimigo>& inimigos,  Jogador& jogador, Bomba&
 // Função para destruir uma parede quebrável e possivelmente gerar um power-up
 void destruirParedeQuebravel(int m[][15], int x, int y, Jogador& jogador, Display& ingameDisplay)
 {
-    int tipoPowerUp = rand()%7
+    int tipoPowerUp = rand()%7;
      for (int i = 0; i < 15; i++)
     {
         for (int j = 0; j < 15; j++)
@@ -365,7 +395,7 @@ void destruirParedeQuebravel(int m[][15], int x, int y, Jogador& jogador, Displa
             {
                 case 0:
                     m[x][y] = 9; // Símbolo para aumento da quantidade de bombas
-                    //jogador.maximoBombas++;
+                    jogador.maximoBombas++;
                     break;
                 case 1:
                     m[x][y] = 8; // Símbolo para vida extra
@@ -375,9 +405,25 @@ void destruirParedeQuebravel(int m[][15], int x, int y, Jogador& jogador, Displa
                     m[x][y] = 10; // Símbolo para vida extra
                     jogador.resisteBomba == true;
                     break;
+                case 3:
+                    m[x][y] = 11; // Símbolo para vida extra
+                    jogador.bombaRelogio == true;
+                    break;
+                case 4:
+                    m[x][y] = 12; // Símbolo para vida extra
+                    jogador.noclip == true;
+                    break;
+                case 5:
+                    m[x][y] = 13; // Símbolo para vida extra
+                    jogador.noclipBomba == true;
+                    break;
+                case 6:
+                    m[x][y] = 14; // Símbolo para vida extra
+                    jogador.raioBomba++;
+                    break;
                 // Adicione outros casos conforme necessário
                 default:
-                    m[x][y] = 10; // Símbolo padrão para power-ups desconhecidos
+                    m[x][y] = 20; // Símbolo padrão para power-ups desconhecidos
                     break;
             }
 
@@ -580,18 +626,16 @@ int main()
                     m[bomba.x][bomba.y] = 0;
                     ultimoTempoBomba2 = tempoAtual;
 
-<<<<<<< HEAD
+
                     // Verifica se a parede quebravel está na área de explosão
-=======
-                    // Verifica se o jogador estÃ¡ na Ã¡rea de explosÃ£o
->>>>>>> d38599a0efd08e2aa271bd311eccd037cf3252ee
+
                     for (int i = -1; i <= 1; ++i)
                     {
                         for (int j = -1; j <= 1; ++j)
                         {
                             if (m[bomba.x + i][bomba.y] == 2 || m[bomba.x + i][bomba.y] == 0)   // Se for uma parede quebrÃ¡vel
                             {
-<<<<<<< HEAD
+
                                 m[bomba.x + i][bomba.y] = 7; // Explosão e Remove a parede quebrável do mapa
                                 destruirParedeQuebravel(m, jogador.x, jogador.y, jogador, ingameDisplay);
                             }
@@ -609,8 +653,7 @@ int main()
                             {
                                 m[bomba.x][bomba.y - i] = 7; // Explosão e Remove a parede quebrável do mapa
                                 destruirParedeQuebravel(m, jogador.x, jogador.y, jogador, ingameDisplay);
-=======
-                                m[bomba.x + i][bomba.y] = 7; // ExplosÃ£o e Remove a parede quebrÃ¡vel do mapa
+
                             }
                             else if(m[bomba.x][bomba.y + i] == 2 || m[bomba.x][bomba.y + i] == 0)
                             {
@@ -623,25 +666,25 @@ int main()
                             else if(m[bomba.x][bomba.y - i] == 2 || m[bomba.x][bomba.y - i] == 0)
                             {
                                 m[bomba.x][bomba.y - i] = 7; // ExplosÃ£o e Remove a parede quebrÃ¡vel do mapa
->>>>>>> d38599a0efd08e2aa271bd311eccd037cf3252ee
+
                             }
-                            int powerUp;
-                                powerUp = rand() % 2;
-
-                                if(powerUp == 1 && m[bomba.x + i][bomba.y] == 2){
-                                    m[bomba.x + i][bomba.y] = 8;
-                                }else if(powerUp == 1 && m[bomba.x][bomba.y + i] == 2){
-                                    m[bomba.x][bomba.y + i] = 8;
-
-                                }else if(powerUp == 1 && m[bomba.x - i][bomba.y] == 2){
-                                    m[bomba.x - i][bomba.y] = 8;
-
-                                }else if(powerUp == 1 && m[bomba.x][bomba.y - i] == 2){
-                                    m[bomba.x][bomba.y - i] = 8;
-                                }
-                                if(m[jogador.x][jogador.y] == powerUp){
-                                    powerUp == 0;
-                                }
+//                            int powerUp;
+//                                powerUp = rand() % 2;
+//
+//                                if(powerUp == 1 && m[bomba.x + i][bomba.y] == 2){
+//                                    m[bomba.x + i][bomba.y] = 8;
+//                                }else if(powerUp == 1 && m[bomba.x][bomba.y + i] == 2){
+//                                    m[bomba.x][bomba.y + i] = 8;
+//
+//                                }else if(powerUp == 1 && m[bomba.x - i][bomba.y] == 2){
+//                                    m[bomba.x - i][bomba.y] = 8;
+//
+//                                }else if(powerUp == 1 && m[bomba.x][bomba.y - i] == 2){
+//                                    m[bomba.x][bomba.y - i] = 8;
+//                                }
+//                                if(m[jogador.x][jogador.y] == powerUp){
+//                                    powerUp == 0;
+//                                }
 
 
                         }
@@ -649,8 +692,8 @@ int main()
 
                     // Verifica se o jogador estÃ¡ na Ã¡rea de explosÃ£o, do/while verifica se o jogador tem o powerUp de resistencia a bomba
                     //resisteBomba();
-                    while (!resisteBomba())
-                    {
+                    //while (!jogador.resisteBomba)
+                    //{
 
                         if (jogador.x == bomba.x || jogador.y == bomba.y)
                         {
@@ -663,7 +706,7 @@ int main()
                             }
                         }
 
-                    }
+                    //}
 
 
 
