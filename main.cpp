@@ -5,6 +5,7 @@
 #include <vector>
 #include <chrono>
 #include <locale.h>
+#define tamanhoMapa = 50;
 
 using namespace std;
 using namespace std::chrono;
@@ -37,6 +38,7 @@ struct Bomba
     bool ativa;
     short int x;
     short int y;
+    //short int maximoBombas;
 };
 // Função para verificar se o movimento é válido
 bool verificaMovimento(int m[][15], int x, int y)
@@ -189,7 +191,7 @@ void definirJogo(int m[][15], const vector<Inimigo>& inimigos, const Jogador& jo
     cout << "Tempo: " << ingameDisplay.tempo << " segundos" << endl;
 }
 
-void resetMapa(int m[][15], vector<Inimigo>& inimigos,  Jogador& jogador, Bomba& bomba, int& contadorPiscadasBomba, Display ingameDisplay)
+void resetMapa(int m[][15], vector<Inimigo>& inimigos,  Jogador& jogador, Bomba& bomba, int& contadorPiscadasBomba, Display& ingameDisplay)
 {
     // Reinicializa o mapa com suas configurações iniciais
     Sleep(1000);
@@ -269,7 +271,7 @@ void resetMapa(int m[][15], vector<Inimigo>& inimigos,  Jogador& jogador, Bomba&
     {
         for (int j = 0; j < 15; j++)
         {
-            if (m[i][j] == 7)
+            if (m[i][j] == 7 or m[i][j] == 3)
             {
                 m[i][j] = 0;
             }
@@ -314,6 +316,7 @@ void resetMapa(int m[][15], vector<Inimigo>& inimigos,  Jogador& jogador, Bomba&
     bomba.ativa = false;
     bomba.x = 0;
     bomba.y = 0;
+    //bomba.maximoBombas = 1;
     contadorPiscadasBomba = 0;
     ingameDisplay.movimento = 0;
     ingameDisplay.qtdBombas = 0;
@@ -465,6 +468,7 @@ int main()
                             if (!bomba.ativa)
                             {
                                 bomba.ativa = true;
+                                //bomba.maximoBombas--;
                                 bomba.x = jogador.x;
                                 bomba.y = jogador.y;
                                 ultimoTempoBomba2 = tempoAtual2;
