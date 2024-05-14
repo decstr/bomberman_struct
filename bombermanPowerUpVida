@@ -1,0 +1,830 @@
+#include <iostream>
+#include <windows.h>
+#include <conio.h>
+#include <time.h>
+#include <vector>
+#include <chrono>
+#include <locale.h>
+#include <stdio.h>
+#include <MMsystem.h>
+
+#pragma comment(lib, "winmm.lib")
+
+using namespace std;
+using namespace std::chrono;
+
+const int MAP_WIDTH = 13;
+const int MAP_HEIGHT = 15;
+
+// Estrutura para o display in game
+struct Display {
+    float tempo;
+    int movimento;
+    int qtdBombas;
+    int vidas = 1;
+    int maxBombas = 1;
+};
+
+// Estrutura para representar os inimigos
+struct Inimigo
+{
+    int x;
+    int y;
+};
+
+// Estrutura para representar os jogadores
+struct Jogador
+{
+    short int x;
+    short int y;
+    int vidas = 1; ///Alterado pelo Nicolas
+    short int maximoBombas = 1;
+    bool resisteBomba = false;
+    bool raioBomba = 1;
+    bool bombaRelogio = false;
+    bool noclip = false;
+    bool noclipBomba = false;
+};
+
+struct PowerUp {
+    int x = 89;
+    int y = 89;
+
+};
+
+// Estrutura para representar as bombas
+struct Bomba
+{
+    bool ativa;
+    short int x;
+    short int y;
+};
+
+
+// Fun��o para verificar se o movimento � v�lido
+
+bool verificaMovimento(int m[][MAP_HEIGHT], int x, int y)
+{
+    if (m[x][y] >=8 && m[x][y] <=14){
+        return m[x][y];
+    }
+    return m[x][y] == 0;
+}
+
+int verificaMovimentoPowerUp(int m[][MAP_HEIGHT], Jogador& jogador, PowerUp& pUp, Display& ingameDisplay){///Alterado pelo Nicolas
+    for (int i = 0; i < MAP_WIDTH; i++)
+    {
+        for (int j = 0; j < MAP_HEIGHT; j++){
+                if (m[i][j] >= 8 && m[i][j] <= 14 && jogador.x == pUp.x && jogador.y == pUp.y){
+                        if(m[i][j] == 8){   ///Alterado pelo Nicolas
+                            jogador.vidas++;    ///Alterado pelo Nicolas
+                            ingameDisplay.vidas++; ///Alterado pelo Nicolas
+                            m[i][j] = 0;    ///Alterado pelo Nicolas
+                        }
+                return m[i][j]= 0;
+
+            }
+    }
+}
+}
+
+
+// Fun��o para mover os inimigos
+
+void moverInimigos(int m[][MAP_HEIGHT], vector<Inimigo>& inimigos)
+{
+    for (auto& inimigo : inimigos)
+    {
+        int dir = rand() % 4; // 0 para cima, 1 para baixo, 2 para esquerda, 3 para direita
+        switch (dir)
+        {
+        case 0:
+            if (verificaMovimento(m, inimigo.x - 1, inimigo.y))
+            {
+                inimigo.x--;
+            }
+            break;
+        case 1:
+            if (verificaMovimento(m, inimigo.x + 1, inimigo.y))
+            {
+                inimigo.x++;
+            }
+            break;
+        case 2:
+            if (verificaMovimento(m, inimigo.x, inimigo.y - 1))
+            {
+                inimigo.y--;
+            }
+            break;
+        case 3:
+            if (verificaMovimento(m, inimigo.x, inimigo.y + 1))
+            {
+                inimigo.y++;
+            }
+            break;
+        }
+    }
+
+}
+
+// Função para definir o estado do jogo
+void definirJogo(int m[][MAP_HEIGHT], const vector<Inimigo>& inimigos, const Jogador& jogador, const Bomba& bomba, int& contadorPiscadasBomba, const Display& ingameDisplay)
+{
+    COORD coord;
+    coord.X = 0;
+    coord.Y = 0;
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+
+    for (int i = 0; i < MAP_WIDTH; i++)
+    {
+        for (int j = 0; j < MAP_HEIGHT; j++)
+        {
+            if (i == jogador.x && j == jogador.y)
+            {
+                cout << char(36);
+            }
+            else if (bomba.x == i && bomba.y == j && bomba.ativa && contadorPiscadasBomba % 2 == 0)
+            {
+                cout << char(184); // Exibe a bomba se o contador de piscadas for par
+            }
+            else
+            {
+                bool verificaInimigo = false;
+                for (const auto& inimigo : inimigos)
+                {
+                    if (i == inimigo.x && j == inimigo.y)
+                    {
+                        cout << char(159);
+                        verificaInimigo = true;
+                        break;
+                    }
+                }
+                if (!verificaInimigo)
+
+                {
+                    switch (m[i][j])
+                    {
+                    case 0:
+                        cout << " ";
+                        break;
+                    case 1:
+                        cout << char(219);
+                        break;
+                    case 2:
+                        cout << char(35);
+                        break; // Paredes quebráveis
+                    case 3:
+                        cout << char(157);
+                        break; // bomba
+                    case 4:
+                        cout << char(159);
+                        break; // Inimigo
+                    case 5:
+                        cout << char(36);
+                        break; // Jogador
+                    case 7:
+                        cout << char(134);
+                        break; // explos�o
+                    case 8:
+                        cout << char(3);
+                        break; //powerup
+                    case 9:
+                        cout << char(153);
+                        break;
+                    case 10:
+                        cout << char(165);
+                        break;
+                    case 11:
+                        cout << char(233);
+                        break;
+                    case 12:
+                        cout << char(75);
+                        break;
+                    case 13:
+                        cout << char(75);
+                        break;
+                     case 14:
+                        cout << char(75);
+                        break;
+
+                    }
+                }
+            }
+        }
+        cout << "\n";
+    }
+    cout << "Quantidade de movimentos: " << ingameDisplay.movimento << endl;
+    cout << "Quantidade de bombas usadas: " << ingameDisplay.qtdBombas << endl;
+    cout << "Tempo: " << ingameDisplay.tempo << " segundos" << endl;
+    cout << "Vidas: " << ingameDisplay.vidas << endl;
+    cout << "Quantidade de bombas: " << ingameDisplay.maxBombas << endl;
+}
+
+void resetMapa(int m[][MAP_HEIGHT], vector<Inimigo>& inimigos,  Jogador& jogador, Bomba& bomba, int& contadorPiscadasBomba, Display& ingameDisplay)
+{
+    // Reinicializa o mapa com suas configurações iniciais
+    Sleep(1000);
+    system("cls");
+    for (int i = 0; i < MAP_WIDTH; i++)
+    {
+        for (int j = 0; j < MAP_HEIGHT; j++)
+        {
+            if (i == jogador.x && j == jogador.y)
+            {
+                cout << char(36);
+            }
+            else if (bomba.x == i && bomba.y == j && bomba.ativa && contadorPiscadasBomba % 2 == 0)
+            {
+                cout << char(184); // Exibe a bomba se o contador de piscadas for par
+            }
+            else
+            {
+                bool verificaInimigo = false;
+                for (const auto& inimigo : inimigos)
+                {
+                    if (i == inimigo.x && j == inimigo.y)
+                    {
+                        cout << char(159);
+                        verificaInimigo = true;
+                        break;
+                    }
+                }
+                if (!verificaInimigo)
+                {
+                    switch (m[i][j])
+                    {
+                    case 0:
+                        cout << " ";
+                        break;
+                    case 1:
+                        cout << char(219);
+                        break;
+                    case 2:
+                        cout << char(35);
+                        break; // Paredes quebráveis
+                    case 3:
+                        cout << char(157);
+                        break; // bomba
+                    case 4:
+                        cout << char(159);
+                        break; // Inimigo
+                    case 5:
+                        cout << char(36);
+                        break; // Jogador
+                    case 7:
+                        cout << char(134);
+                        break; // explos�o
+                    case 8:
+                        cout << char(3);
+                        break; //powerup
+                    case 9:
+                        cout << char(153);
+                        break;
+                    case 10:
+                        cout << char(165);
+                        break;
+                    case 11:
+                        cout << char(233);
+                        break;
+                    case 12:
+                        cout << char(75);
+                        break;
+                    case 13:
+                        cout << char(75);
+                        break;
+                    case 14:
+                        cout << char(75);
+                        break;
+
+                    }
+                }
+            }
+        }
+        cout << "\n";
+    }
+
+    // Reposiciona os inimigos
+    inimigos.clear(); // Limpa o vetor de inimigos
+    for (int k = 0; k < 3; k++)   //Da respawn nos inimigos
+    {
+        Inimigo novoInimigo;
+        do
+        {
+            novoInimigo.x = rand() % MAP_WIDTH;
+            novoInimigo.y = rand() % MAP_HEIGHT;
+        }
+        while (m[novoInimigo.x][novoInimigo.y] != 0);   // Garante que o inimigo não nasça em uma parede
+        inimigos.push_back(novoInimigo); // Adiciona o novo inimigo ao vetor
+    }
+
+    // Limpa a área de explos�o
+    for (int i = 0; i < MAP_WIDTH; i++)
+    {
+        for (int j = 0; j < MAP_HEIGHT; j++)
+        {
+            if (m[i][j] == 7)
+            {
+                m[i][j] = 0;
+            }
+        }
+    }
+
+        // Recoloca as paredes quebraveis
+    for (int i = 0; i < MAP_WIDTH; i++)
+    {
+        for (int j = 0; j < MAP_HEIGHT; j++)
+        {
+            if (m[i][j] == 2)
+            {
+                m[i][j] = 0;
+            }
+        }
+    }
+
+    // Define um minimo e um maximo de paredes quebraveis no mapa
+    int minParedesQuebraveis = 10;
+    int maxParedesQuebraveis = 20;
+
+    // Gera uma quantidade aleatória de paredes quebraveis limitadas no minimo e maximo
+    int numParedesQuebraveis = rand() % (maxParedesQuebraveis - minParedesQuebraveis + 1) + minParedesQuebraveis;
+
+    // Coloca as paredes quebraveis de modo aleatório
+    for (int k = 0; k < numParedesQuebraveis; k++)
+    {
+        int x, y;
+        do
+        {
+            x = rand() % MAP_WIDTH;
+            y = rand() % MAP_HEIGHT;
+        }
+        while (m[x][y] != 0);   // Garante que a posição esteja vazia (não é parede existente, inimigo ou o jogador)
+        m[x][y] = 2;
+    }
+
+    // Reinicializa as variáveis relacionadas ao jogo
+    jogador.x = 1;
+    jogador.y = 1;
+    jogador.vidas = 1; ///Alterado pelo Nicolas
+    bomba.ativa = false;
+    bomba.x = 0;
+    bomba.y = 0;
+    contadorPiscadasBomba = 0;
+    ingameDisplay.movimento = 0;
+    ingameDisplay.qtdBombas = 0;
+    ingameDisplay.tempo = 0;
+    ingameDisplay.vidas = 1; ///Alterado pelo Nicolas
+}
+
+// Fun��o para destruir uma parede quebr�vel e possivelmente gerar um power-up
+void destruirParedeQuebravel(int m[][MAP_HEIGHT], int x, int y, Jogador& jogador, Display& ingameDisplay, PowerUp& pUp)
+{
+    for (int i = 0; i < MAP_WIDTH; i++){
+        for (int j = 0; j < MAP_HEIGHT; j++){
+            if (m[i][j] == 2) // Verifica se � uma parede quebr�vel
+            {
+                // Calcula o tipo de power-up e a chance de gera��o para esta parede espec�fica
+                int tipoPowerUp = rand() % 7;
+                int chancePowerUp = rand()% 100;
+
+                // Verifica se a chance de gerar o power-up � menor que 100%
+                if (chancePowerUp < 100)
+                {
+                    // Destr�i a parede quebr�vel
+                    m[x][y] = 0;
+
+                    // Define o s�mbolo correspondente ao tipo de power-up gerado
+                    switch (tipoPowerUp)
+                    {
+                    case 0:
+                        m[x][y] = 9; // S�mbolo para aumento da quantidade de bombas
+                        pUp.x = x;
+                        pUp.y = y;
+                        break;
+                    case 1:
+                        m[x][y] = 8; // S�mbolo para vida extra
+                        pUp.x = x;
+                        pUp.y = y;
+                        break;
+                    case 2:
+                        m[x][y] = 10; // S�mbolo para invencibilidade contra bomba
+                        pUp.x = x;
+                        pUp.y = y;
+                        break;
+                    case 3:
+                        m[x][y] = 11; // S�mbolo para bomba rel�gio
+                        pUp.x = x;
+                        pUp.y = y;
+                        break;
+                    case 4:
+                        m[x][y] = 12; // S�mbolo para noclip
+                        pUp.x = x;
+                        pUp.y = y;
+                        break;
+                    case 5:
+                        m[x][y] = 13; // S�mbolo para noclip da bomba
+                        pUp.x = x;
+                        pUp.y = y;
+                        break;
+                    case 6:
+                        m[x][y] = 14; // S�mbolo para aumento do raio da bomba
+                        pUp.x = x;
+                        pUp.y = y;
+                        break;
+                    // Adicione outros casos conforme necess�rio
+                    default:
+                        m[x][y] = 20; // S�mbolo padr�o para power-ups desconhecidos
+                        pUp.x = x;
+                        pUp.y = y;
+                        break;
+                    }
+
+                }
+            }
+        }
+    }
+}
+
+
+
+// Função para verificar se o jogo acabou
+bool verificaGameOver(int jogadorX, int jogadorY, const vector<Inimigo>& inimigos)
+{
+    for (const auto& inimigo : inimigos)
+    {
+        if (jogadorX == inimigo.x && jogadorY == inimigo.y)
+        {
+            return true; // Jogador atingido pelo inimigo
+        }
+    }
+    return false; // Jogador não atingido
+}
+
+int main()
+{
+    //setlocale(LC_ALL, "Portuguese");
+    srand(time(NULL));
+
+    HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_CURSOR_INFO cursorInfo;
+    GetConsoleCursorInfo(out, &cursorInfo);
+    cursorInfo.bVisible = false;
+    SetConsoleCursorInfo(out, &cursorInfo);
+
+    char tecla;
+
+    int m[MAP_WIDTH][MAP_HEIGHT]; // criacao do mapa
+
+    for(int i = 0; i < MAP_WIDTH; i++) {
+        for(int j = 0; j < MAP_HEIGHT; j++) {
+            if(i == 0 || i == MAP_WIDTH - 1 || j == 0 || j == MAP_HEIGHT - 1) { // coloca paredes 1 ao redor do mapa
+                m[i][j] = 1;
+            } else if (i%2 == 0 && j%2 == 0){
+                m[i][j] = 1; // faz as paredes 1 spawnarem automaticamente no centro
+            } else {
+                int aleatorio = rand() % 3; // faz a aleatoridade das caixas 2
+                if(aleatorio == 1){
+                    aleatorio += 1;
+                }
+                if(i == 1 && j == 1 || i == 1 && j == 2 || i == 1 && j == 3 || i == 1 && j == 4 ||
+                   i == 2 && j == 1 || i == 3 && j == 1 || i == 2 && j == 3 || i == 2 && j == 4){
+                    m[i][j] = 0;
+                } else {
+                    m[i][j] = aleatorio;
+                }
+            }
+        }
+    }
+
+    vector<Inimigo> inimigos(3); // Vetor para armazenar os inimigos
+    for (auto& inimigo : inimigos)
+    {
+        do{
+            inimigo.x = rand() % MAP_WIDTH;
+            inimigo.y = rand() % MAP_HEIGHT;
+        }
+        while (m[inimigo.x][inimigo.y] != 0);   // Garante que o inimigo não nasça em uma parede
+    }
+    Jogador jogador = {1, 1};
+    Bomba bomba = {0, 0, false};
+    Display ingameDisplay = {0, 0, 0};
+    PowerUp pUp;
+
+    auto ultimoTempoPlayer = steady_clock::now();
+    auto ultimoTempoInimigo = steady_clock::now();
+    auto ultimoTempoBomba = steady_clock::now();
+    auto ultimoTempoBomba2 = steady_clock::now();
+    auto inicioContadorInGame = steady_clock::now();
+    milliseconds updateTempoPlayer(50); // Controle da velocidade de movimento do jogador
+    milliseconds updateTempoInimigo(250); // Controla a velocidade de movimento do inimigo
+    milliseconds tempoExplosao(3000); // Tempo de explos�o da bomba (3 segundos)
+    milliseconds tempoPiscadaBomba(500); // Intervalo de tempo para a piscada da bomba
+    milliseconds timerDisplayExplosao(50); // Timer referente ao tempo no qual os caracteres da explos�o permanecem no mapa
+    milliseconds marcadorTempoInGame(1000); // Referente ao tempo mostrado in game
+    int contadorPiscadasBomba = 0;
+
+
+    int opcao; // Variável para armazenar a op�ao do menu
+
+    do
+    {
+        cout << "=== MENU ===\n";
+        cout << "1. Jogar\n";
+        cout << "2. Sair\n";
+        cout << "3. Informações de desenvolvimento\n";
+        cout << "Escolha uma op�ao: ";
+        cin >> opcao;
+        system("cls");
+
+        switch (opcao)
+        {
+        case 1: // Jogar
+            while (true)
+            {
+                auto tempoAtual = steady_clock::now();
+                auto tempoAtual2 = steady_clock::now();
+                auto tempoAtualContadorInGame = steady_clock::now();
+
+
+
+                // Movimentação do jogador
+                auto contadorTempoPlayer = duration_cast<milliseconds>(tempoAtual - ultimoTempoPlayer);
+                if (contadorTempoPlayer >= updateTempoPlayer)
+                {
+                    ultimoTempoPlayer = tempoAtual;
+
+                    if (_kbhit())
+                    {
+                        tecla = getch();
+                        switch (tecla)
+                        {
+                        case 72:
+                        case 'w':
+                            if (jogador.x > 0 && verificaMovimento(m, jogador.x - 1, jogador.y))
+                            {
+                                jogador.x--;
+                                ingameDisplay.movimento++;
+                                verificaMovimentoPowerUp(m, jogador, pUp,  ingameDisplay);
+                            }
+                            break;
+                        case 80:
+                        case 's':
+                            if (jogador.x < MAP_WIDTH-1 && verificaMovimento(m, jogador.x + 1, jogador.y))
+                            {
+                                jogador.x++;
+                                ingameDisplay.movimento++;
+                                verificaMovimentoPowerUp(m, jogador, pUp,  ingameDisplay);
+                            }
+                            break;
+                        case 75:
+                        case 'a':
+                            if (jogador.y > 0 && verificaMovimento(m, jogador.x, jogador.y - 1))
+                            {
+                                jogador.y--;
+                                ingameDisplay.movimento++;
+                                verificaMovimentoPowerUp(m, jogador, pUp, ingameDisplay);
+                            }
+                            break;
+                        case 77:
+                        case 'd':
+                            if (jogador.y < MAP_HEIGHT-1 && verificaMovimento(m, jogador.x, jogador.y + 1))
+                            {
+                                jogador.y++;
+                                ingameDisplay.movimento++;
+                                verificaMovimentoPowerUp(m, jogador, pUp,  ingameDisplay);
+                            }
+                            break;
+                        case 32: // Coloca a bomba
+                            if (!bomba.ativa)
+                            {
+                                bomba.ativa = true;
+                                bomba.x = jogador.x;
+                                bomba.y = jogador.y;
+                                ultimoTempoBomba2 = tempoAtual2;
+                                ingameDisplay.qtdBombas++;
+                                m[bomba.x][bomba.y] = 3; // Marca a posição da bomba no mapa
+                            }
+                            break;
+                        }
+                        if (verificaGameOver(jogador.x, jogador.y, inimigos))
+                        {
+                            jogador.vidas--;
+                            ingameDisplay.vidas--; ///Alterado pelo Nicolas
+                        }
+                        if (jogador.vidas == 0){
+                            cout << "Voc� perdeu! O inimigo te atingiu.\n";
+                            resetMapa(m, inimigos, jogador, bomba, contadorPiscadasBomba,ingameDisplay);
+                        }
+                    }
+                }
+
+                // Movimentação dos inimigos
+                auto contadorTempoInimigo = duration_cast<milliseconds>(tempoAtual - ultimoTempoInimigo);
+                if (contadorTempoInimigo >= updateTempoInimigo)
+                {
+                    ultimoTempoInimigo = tempoAtual;
+                    moverInimigos(m, inimigos);
+                    if (verificaGameOver(jogador.x, jogador.y, inimigos))
+                    {
+                        jogador.vidas--; ///Alterado pelo Nicolas
+                        ingameDisplay.vidas--; ///Alterado pelo Nicolas
+                    }
+                    if (jogador.vidas == 0){ ///Alterado pelo Nicolas
+                        cout << "Voc� perdeu! O inimigo te atingiu.\n";
+                        resetMapa(m, inimigos, jogador, bomba, contadorPiscadasBomba,ingameDisplay); // Reseta o mapa
+                        break;
+                    }
+                }
+
+                //Timer in Game
+                auto contadorTempoInGame = duration_cast<milliseconds>(tempoAtualContadorInGame - inicioContadorInGame);
+                if (contadorTempoInGame >= marcadorTempoInGame){
+                    ingameDisplay.tempo++;
+                    inicioContadorInGame = tempoAtualContadorInGame;
+                }
+
+                // explos�o da bomba
+                auto contadorTempoBomba = duration_cast<milliseconds>(tempoAtual2 - ultimoTempoBomba2);
+                if (bomba.ativa && contadorTempoBomba >= tempoExplosao)
+                {
+                    // Marca a explos�o no mapa
+                    m[bomba.x][bomba.y] = 0;
+                    ultimoTempoBomba2 = tempoAtual;
+
+
+                    // Verifica se a parede quebravel est� na �rea de explos�o
+
+                    for (int i = -1; i <= 1; ++i)
+                    {
+                        for (int j = -1; j <= 1; ++j)
+                        {
+                            if (m[bomba.x + i][bomba.y] == 2)   // Se for uma parede quebrável
+                            {
+
+                                m[bomba.x + i][bomba.y] = 7; // Explos�o e Remove a parede quebr�vel do mapa
+                                destruirParedeQuebravel(m, bomba.x + i, bomba.y, jogador, ingameDisplay, pUp);
+                            }
+                            else if (m[bomba.x + i][bomba.y] == 0){
+                                m[bomba.x + i][bomba.y] = 7; // Mostra a explos�o da bomba em lugar vazio
+                            }
+
+                            else if(m[bomba.x][bomba.y + i] == 2)
+                            {
+                                m[bomba.x][bomba.y + i] = 7; // Explos�o e Remove a parede quebr�vel do mapa
+                                destruirParedeQuebravel(m, bomba.x, bomba.y + i, jogador, ingameDisplay, pUp);
+                            }
+                            else if (m[bomba.x][bomba.y + i] == 0) {
+                                m[bomba.x][bomba.y + i] = 7; // Mostra a explos�o da bomba em lugar vazio
+
+                            }
+                            else if(m[bomba.x - i][bomba.y] == 2)
+                            {
+                                m[bomba.x - i][bomba.y] = 7; // Explos�o e Remove a parede quebr�vel do mapa
+                                destruirParedeQuebravel(m, bomba.x - i, bomba.y, jogador, ingameDisplay, pUp);
+                            }
+                            else if (m[bomba.x - i][bomba.y] == 0){
+                                m[bomba.x - i][bomba.y] = 7; // Mostra a explos�o da bomba em lugar vazio
+
+                            }
+                            else if(m[bomba.x][bomba.y - i] == 2)
+                            {
+                                m[bomba.x][bomba.y - i] = 7; // Explos�o e Remove a parede quebr�vel do mapa
+                                destruirParedeQuebravel(m,bomba.x, bomba.y - i, jogador, ingameDisplay, pUp);
+
+                            }
+                            else if (m[bomba.x][bomba.y - i] == 0) {
+                                m[bomba.x][bomba.y - i] = 7; // Mostra a explos�o da bomba em lugar vazio
+                            }
+                            else if(m[bomba.x][bomba.y + i] == 2)
+                            {
+                                m[bomba.x][bomba.y + i] = 7; // explos�o e Remove a parede quebrável do mapa
+                                destruirParedeQuebravel(m, bomba.x, bomba.y + i, jogador, ingameDisplay, pUp);
+                            }
+                            else if (m[bomba.x][bomba.y + i] == 0) {
+                                m[bomba.x][bomba.y + i] = 7; // Mostra a explos�o da bomba em lugar vazio
+
+                            }
+                            else if(m[bomba.x - i][bomba.y] == 2)
+                            {
+                                m[bomba.x - i][bomba.y] = 7; // explos�o e Remove a parede quebrável do mapa
+                                destruirParedeQuebravel(m,bomba.x - i,bomba.y, jogador, ingameDisplay, pUp);
+                            }
+                            else if (m[bomba.x - i][bomba.y] == 0){
+                                m[bomba.x - i][bomba.y] = 7; // Mostra a explos�o da bomba em lugar vazio
+
+                            }
+                            else if(m[bomba.x][bomba.y - i] == 2)
+                            {
+                                m[bomba.x][bomba.y - i] = 7; // explos�o e Remove a parede quebrável do mapa
+                                destruirParedeQuebravel(m, bomba.x, bomba.y - i, jogador, ingameDisplay, pUp);
+
+                            }
+                            else if (m[bomba.x][bomba.y - i] == 0){
+                                m[bomba.x][bomba.y - i] = 7; // Mostra a explos�o da bomba em lugar vazio
+                            }
+                        }
+                    }
+
+                    // Verifica se o jogador está na área de explos�o, do/while verifica se o jogador tem o powerUp de resistencia a bomba
+                    //resisteBomba();
+                    //while (!jogador.resisteBomba)
+                    //{
+
+                        if (jogador.x == bomba.x || jogador.y == bomba.y)
+                           {
+
+                                if ((abs(jogador.x - bomba.x) <= 1 && jogador.y == bomba.y) ||
+                                    (abs(jogador.y - bomba.y) <= 1 && jogador.x == bomba.x))
+                                {
+                                    if(jogador.vidas > 0){ ///Alterado pelo Nicolas
+                                        jogador.vidas--; ///Alterado pelo Nicolas
+                                        ingameDisplay.vidas--; ///Alterado pelo Nicolas
+                                    }
+                                    else if(jogador.vidas == 0){ ///Alterado pelo Nicolas
+                                    cout << "Voc� perdeu! Voc� foi atingido pela explos�o.\n";
+                                    resetMapa(m, inimigos, jogador, bomba, contadorPiscadasBomba,ingameDisplay); // Reseta o mapa
+                                    break;
+                                    }
+                                }
+
+
+
+
+                        }
+
+                    //}
+
+
+
+
+                    // Verifica se o inimigo está na área de explos�o
+                    for (auto it = inimigos.begin(); it != inimigos.end();)
+                    {
+                        if ((abs(it->x - bomba.x) == 1 && it->y == bomba.y) || //verifica se o inimigo está a 1 posição da bomba
+                                (abs(it->y - bomba.y) == 1 && it->x == bomba.x))
+                        {
+                            it = inimigos.erase(it); // Remove o inimigo do vetor
+                        }
+                        else
+                        {
+                            ++it;
+                        }
+                    }
+                    //Verifca se todos inimigos foram removidos do vetor
+                    if (inimigos.empty())
+                    {
+                        // Todos os inimigos foram eliminados, o jogador ganha
+                        cout << "Parab�ns! Todos inimigos foram derrotados. Voc� venceu! \n";
+                        resetMapa(m, inimigos, jogador, bomba, contadorPiscadasBomba, ingameDisplay); // Reseta o mapa
+                        break;
+                    }
+
+
+
+                    bomba.ativa = false;
+                }
+                // Timer que remove a explos�o do mapa
+                auto contadorDisplayExplosao = duration_cast<milliseconds>(tempoAtual - ultimoTempoBomba2);
+                if (contadorDisplayExplosao >= timerDisplayExplosao && !bomba.ativa)
+                {
+                    for (int i = -1; i <= 1; ++i)
+                    {
+                        for (int j = -1; j <= 1; ++j)
+                        {
+                            if (m[bomba.x + i][bomba.y + j] == 7)
+                            {
+                                m[bomba.x + i][bomba.y + j] = 0;
+                            }
+                        }
+                    }
+                }
+
+                // Atualiza a tela do jogo
+                definirJogo(m, inimigos, jogador, bomba, contadorPiscadasBomba, ingameDisplay);
+
+                // Controle da piscada da bomba
+                auto contadorTempoPiscadaBomba = duration_cast<milliseconds>(tempoAtual - ultimoTempoBomba);
+                if (bomba.ativa && contadorTempoPiscadaBomba >= tempoPiscadaBomba)
+                {
+                    ultimoTempoBomba = tempoAtual;
+                    contadorPiscadasBomba++;
+                }
+
+
+            }
+            break;
+        case 2: // Sair
+            cout << "Saindo do jogo...\n";
+            break;
+        case 3: // Informações de desenvolvimento
+            cout << "Desenvolvido por Matheus de Castro, João Marcos, Nicolas e Miguel Soares" << endl;
+            cout << "Matéria: Algoritmos II" << endl;
+            cout << "Professor Alex Rese" << endl;
+            break;
+        default:
+            cout << "Op�ao invalida. Por favor, escolha uma op�ao v�lida.\n";
+        }
+    }
+    while (opcao != 2);
+
+    return 0;
+}
